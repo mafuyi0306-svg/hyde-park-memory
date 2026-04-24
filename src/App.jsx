@@ -186,10 +186,13 @@ export default function App() {
         <p
           style={{
             fontSize: "20px",
-            maxWidth: "700px",
+            maxWidth: "620px",
             lineHeight: 1.7,
             color: "#4b5b46",
             marginBottom: "50px",
+            marginLeft: "auto",
+            marginRight: "auto",
+            textAlign: "center",
           }}
         >
           Draw a memory you have of Hyde Park. It can be a place, a person,
