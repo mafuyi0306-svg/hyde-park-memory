@@ -144,6 +144,12 @@ export default function App() {
       .from("memories")
       .insert([newPost]);
 
+    if (error) {
+      alert("Upload failed: " + error.message);
+      console.log(error);
+      return;
+    }
+
     if (!error) {
       setPosts([newPost, ...posts]);
 
