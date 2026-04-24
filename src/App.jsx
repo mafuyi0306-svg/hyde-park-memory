@@ -379,6 +379,23 @@ export default function App() {
                 >
                   — {post.name || "Anonymous"}
                 </p>
+
+                <a
+                  href={post.image}
+                  download={`${post.title || "memory"}.png`}
+                  style={{
+                    display: "inline-block",
+                    marginTop: "14px",
+                    padding: "10px 14px",
+                    background: "#2d4a2d",
+                    color: "white",
+                    borderRadius: "999px",
+                    textDecoration: "none",
+                    fontSize: "14px",
+                  }}
+                >
+                  Download PNG
+                </a>
               </div>
             </div>
           ))}
