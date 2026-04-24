@@ -31,15 +31,18 @@ export default function App() {
     ctx.lineJoin = "round";
   }, []);
 
-  const getPoint = (e) => {
-    const canvas = canvasRef.current;
-    const rect = canvas.getBoundingClientRect();
+const getPoint = (e) => {
+  const canvas = canvasRef.current;
+  const rect = canvas.getBoundingClientRect();
 
-    return {
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
-    };
+  const touch = e.touches ? e.touches[0] : e;
+
+  return {
+    x: touch.clientX - rect.left,
+    y: touch.clientY - rect.top,
   };
+};
+
 
   const startDrawing = (e) => {
     const canvas = canvasRef.current;
@@ -188,12 +191,16 @@ export default function App() {
             onMouseMove={draw}
             onMouseUp={stopDrawing}
             onMouseLeave={stopDrawing}
+            onTouchStart={startDrawing}
+            onTouchMove={draw}
+            onTouchEnd={stopDrawing}
             style={{
               width: "100%",
               background: "#fdfcf7",
               borderRadius: "20px",
               border: "1px solid #b7c4aa",
               cursor: "crosshair",
+              touchAction: "none",
             }}
           />
 
