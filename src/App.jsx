@@ -381,8 +381,17 @@ export default function App() {
                 </p>
 
                 <a
-                  href={post.image}
-                  download={`${post.title || "memory"}.png`}
+                  href={`data:text/html;charset=utf-8,${encodeURIComponent(`
+                    <html>
+                      <body style="font-family: Georgia, serif; padding: 40px; background: #dbe7cf;">
+                        <h1>${post.title || "Untitled memory"}</h1>
+                        <p><strong>By:</strong> ${post.name || "Anonymous"}</p>
+                        <img src="${post.image}" style="max-width: 100%; border: 1px solid #b7c4aa; background: #fdfcf7;" />
+                        <p style="font-size: 18px; line-height: 1.7;">${post.story || ""}</p>
+                      </body>
+                    </html>
+                  `)}`}
+                  download={`${post.title || "memory"}.html`}
                   style={{
                     display: "inline-block",
                     marginTop: "14px",
@@ -394,7 +403,7 @@ export default function App() {
                     fontSize: "14px",
                   }}
                 >
-                  Download PNG
+                  Download Memory
                 </a>
               </div>
             </div>
