@@ -18,6 +18,7 @@ export default function App() {
   const [name, setName] = useState("");
 
   const [posts, setPosts] = useState([]);
+  const [history, setHistory] = useState([]);
 
   useEffect(() => {
     setupCanvas();
@@ -71,6 +72,8 @@ export default function App() {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
 
+    setHistory((prev) => [...prev, canvas.toDataURL()]);
+
     const point = getPoint(e);
 
     ctx.beginPath();
@@ -106,6 +109,23 @@ export default function App() {
 
     ctx.fillStyle = "#fdfcf7";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
+  };
+
+  const undo = () => {
+    if (history.length === 0) return;
+
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+    const previous = history[history.length - 1];
+    const img = new Image();
+
+    img.src = previous;
+    img.onload = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0);
+    };
+
+    setHistory(history.slice(0, -1));
   };
 
   const submitPost = async () => {
@@ -194,6 +214,8 @@ export default function App() {
             }}
           >
             <button onClick={clearCanvas}>Clear</button>
+
+            <button onClick={undo}>Undo</button>
 
             <label>
               Colour{" "}
