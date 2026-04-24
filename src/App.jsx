@@ -1,4 +1,10 @@
 import { useEffect, useRef, useState } from "react";
+import { createClient } from "@supabase/supabase-js";
+
+const supabase = createClient(
+  "https://bujahrqqercpsasynxgi.supabase.co",
+  "sb_publishable_G8Mr7FRFfYfFNRyWjhNiwA_qpyDpmRW"
+);
 
 export default function App() {
   const canvasRef = useRef(null);
@@ -14,6 +20,11 @@ export default function App() {
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
+    setupCanvas();
+    loadPosts();
+  }, []);
+
+  const setupCanvas = () => {
     const canvas = canvasRef.current;
 
     const width = canvas.offsetWidth;
@@ -29,22 +40,34 @@ export default function App() {
 
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
-  }, []);
-
-const getPoint = (e) => {
-  const canvas = canvasRef.current;
-  const rect = canvas.getBoundingClientRect();
-
-  const touch = e.touches ? e.touches[0] : e;
-
-  return {
-    x: touch.clientX - rect.left,
-    y: touch.clientY - rect.top,
   };
-};
 
+  const loadPosts = async () => {
+    const { data, error } = await supabase
+      .from("memories")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (!error) {
+      setPosts(data);
+    }
+  };
+
+  const getPoint = (e) => {
+    const canvas = canvasRef.current;
+    const rect = canvas.getBoundingClientRect();
+
+    const touch = e.touches ? e.touches[0] : e;
+
+    return {
+      x: touch.clientX - rect.left,
+      y: touch.clientY - rect.top,
+    };
+  };
 
   const startDrawing = (e) => {
+    e.preventDefault();
+
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
 
@@ -58,6 +81,8 @@ const getPoint = (e) => {
 
   const draw = (e) => {
     if (!isDrawing) return;
+
+    e.preventDefault();
 
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
@@ -83,7 +108,7 @@ const getPoint = (e) => {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
   };
 
-  const submitPost = () => {
+  const submitPost = async () => {
     const canvas = canvasRef.current;
 
     const image = canvas.toDataURL("image/png");
@@ -95,13 +120,19 @@ const getPoint = (e) => {
       image,
     };
 
-    setPosts([newPost, ...posts]);
+    const { error } = await supabase
+      .from("memories")
+      .insert([newPost]);
 
-    setTitle("");
-    setStory("");
-    setName("");
+    if (!error) {
+      setPosts([newPost, ...posts]);
 
-    clearCanvas();
+      setTitle("");
+      setStory("");
+      setName("");
+
+      clearCanvas();
+    }
   };
 
   return (
