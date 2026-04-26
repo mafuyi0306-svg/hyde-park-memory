@@ -165,8 +165,12 @@ export default function App() {
     <div
       style={{
         minHeight: "100vh",
-        background: "#dbe7cf",
-        padding: "60px 20px",
+        backgroundColor: "#dbe7cf",
+        backgroundImage: 'linear-gradient(rgba(219,231,207,0.5), rgba(219,231,207,0.5)), url("/hyde-park-bg.svg")',
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        padding: "60px clamp(16px, 4vw, 40px)",
         fontFamily: "Georgia, serif",
         color: "#203020",
       }}
@@ -207,7 +211,8 @@ export default function App() {
 
         <div
           style={{
-            background: "rgba(255,255,255,0.65)",
+            background: "rgba(255,255,255,0.78)",
+            backdropFilter: "blur(8px)",
             borderRadius: "30px",
             padding: "30px",
             marginBottom: "60px",
@@ -344,7 +349,7 @@ export default function App() {
             <div
               key={index}
               style={{
-                background: "rgba(255,255,255,0.7)",
+                background: "rgba(255,255,255,0.82)",
                 borderRadius: "24px",
                 overflow: "hidden",
               }}
