@@ -186,6 +186,7 @@ export default function App() {
             fontSize: "72px",
             lineHeight: 1,
             marginBottom: "20px",
+            textAlign: "center",
           }}
         >
           Hyde Park
