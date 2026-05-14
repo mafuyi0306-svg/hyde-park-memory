@@ -154,7 +154,6 @@ export default function App() {
             <input
               type="file"
               accept="image/*,.pdf"
-              capture="environment"
               onChange={handleImageUpload}
               style={{ display: "none" }}
             />
