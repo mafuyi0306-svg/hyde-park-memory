@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient(
@@ -7,41 +7,15 @@ const supabase = createClient(
 );
 
 export default function App() {
-  const canvasRef = useRef(null);
-
-  const [isDrawing, setIsDrawing] = useState(false);
-  const [brushSize, setBrushSize] = useState(5);
-  const [brushColor, setBrushColor] = useState("#1f3d1f");
-
   const [title, setTitle] = useState("");
   const [story, setStory] = useState("");
   const [name, setName] = useState("");
-
+  const [image, setImage] = useState("");
   const [posts, setPosts] = useState([]);
-  const [history, setHistory] = useState([]);
 
   useEffect(() => {
-    setupCanvas();
     loadPosts();
   }, []);
-
-  const setupCanvas = () => {
-    const canvas = canvasRef.current;
-
-    const width = canvas.offsetWidth;
-    const height = 400;
-
-    canvas.width = width;
-    canvas.height = height;
-
-    const ctx = canvas.getContext("2d");
-
-    ctx.fillStyle = "#fdfcf7";
-    ctx.fillRect(0, 0, width, height);
-
-    ctx.lineCap = "round";
-    ctx.lineJoin = "round";
-  };
 
   const loadPosts = async () => {
     const { data, error } = await supabase
@@ -49,89 +23,44 @@ export default function App() {
       .select("*")
       .order("created_at", { ascending: false });
 
-    if (!error) {
-      setPosts(data);
-    }
+    if (!error) setPosts(data);
   };
 
-  const getPoint = (e) => {
-    const canvas = canvasRef.current;
-    const rect = canvas.getBoundingClientRect();
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
 
-    const touch = e.touches ? e.touches[0] : e;
+    const reader = new FileReader();
 
-    return {
-      x: touch.clientX - rect.left,
-      y: touch.clientY - rect.top,
-    };
-  };
+    reader.onload = () => {
+      const img = new Image();
 
-  const startDrawing = (e) => {
-    e.preventDefault();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const maxWidth = 1200;
+        const scale = Math.min(maxWidth / img.width, 1);
 
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext("2d");
+        canvas.width = img.width * scale;
+        canvas.height = img.height * scale;
 
-    setHistory((prev) => [...prev, canvas.toDataURL()]);
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-    const point = getPoint(e);
+        const compressedImage = canvas.toDataURL("image/jpeg", 0.75);
+        setImage(compressedImage);
+      };
 
-    ctx.beginPath();
-    ctx.moveTo(point.x, point.y);
-
-    setIsDrawing(true);
-  };
-
-  const draw = (e) => {
-    if (!isDrawing) return;
-
-    e.preventDefault();
-
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext("2d");
-
-    const point = getPoint(e);
-
-    ctx.strokeStyle = brushColor;
-    ctx.lineWidth = brushSize;
-
-    ctx.lineTo(point.x, point.y);
-    ctx.stroke();
-  };
-
-  const stopDrawing = () => {
-    setIsDrawing(false);
-  };
-
-  const clearCanvas = () => {
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext("2d");
-
-    ctx.fillStyle = "#fdfcf7";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-  };
-
-  const undo = () => {
-    if (history.length === 0) return;
-
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext("2d");
-    const previous = history[history.length - 1];
-    const img = new Image();
-
-    img.src = previous;
-    img.onload = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(img, 0, 0);
+      img.src = reader.result;
     };
 
-    setHistory(history.slice(0, -1));
+    reader.readAsDataURL(file);
   };
 
   const submitPost = async () => {
-    const canvas = canvasRef.current;
-
-    const image = canvas.toDataURL("image/png");
+    if (!image) {
+      alert("Please upload a map photo first.");
+      return;
+    }
 
     const newPost = {
       title,
@@ -140,25 +69,18 @@ export default function App() {
       image,
     };
 
-    const { error } = await supabase
-      .from("memories")
-      .insert([newPost]);
+    const { error } = await supabase.from("memories").insert([newPost]);
 
     if (error) {
       alert("Upload failed: " + error.message);
-      console.log(error);
       return;
     }
 
-    if (!error) {
-      setPosts([newPost, ...posts]);
-
-      setTitle("");
-      setStory("");
-      setName("");
-
-      clearCanvas();
-    }
+    setPosts([newPost, ...posts]);
+    setTitle("");
+    setStory("");
+    setName("");
+    setImage("");
   };
 
   return (
@@ -166,7 +88,8 @@ export default function App() {
       style={{
         minHeight: "100vh",
         backgroundColor: "#dbe7cf",
-        backgroundImage: 'linear-gradient(rgba(219,231,207,0.5), rgba(219,231,207,0.5)), url("/hyde-park-bg.svg")',
+        backgroundImage:
+          'linear-gradient(rgba(219,231,207,0.55), rgba(219,231,207,0.55)), url("/hyde-park-bg.svg")',
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
@@ -175,15 +98,10 @@ export default function App() {
         color: "#203020",
       }}
     >
-      <div
-        style={{
-          maxWidth: "1100px",
-          margin: "0 auto",
-        }}
-      >
+      <div style={{ maxWidth: "1100px", margin: "0 auto" }}>
         <h1
           style={{
-            fontSize: "72px",
+            fontSize: "clamp(46px, 8vw, 86px)",
             lineHeight: 1,
             marginBottom: "20px",
             textAlign: "center",
@@ -191,23 +109,21 @@ export default function App() {
         >
           Hyde Park
           <br />
-          Memory Archive
+          Memory Map Archive
         </h1>
 
         <p
           style={{
             fontSize: "20px",
-            maxWidth: "620px",
+            maxWidth: "680px",
             lineHeight: 1.7,
             color: "#4b5b46",
-            marginBottom: "50px",
-            marginLeft: "auto",
-            marginRight: "auto",
+            margin: "0 auto 50px",
             textAlign: "center",
           }}
         >
-          Draw a memory you have of Hyde Park. It can be a place, a person,
-          weather, a sound, or a feeling.
+          Upload a photo of your own map of Hyde Park. It can be a hand-drawn map,
+          a marked route, a remembered place, or a visual record of where your story happened.
         </p>
 
         <div
@@ -219,68 +135,52 @@ export default function App() {
             marginBottom: "60px",
           }}
         >
-          <div
+          <label
             style={{
-              marginBottom: "20px",
-              display: "flex",
-              gap: "15px",
-              alignItems: "center",
-              flexWrap: "wrap",
-            }}
-          >
-            <button onClick={clearCanvas}>Clear</button>
-
-            <button onClick={undo}>Undo</button>
-
-            <label>
-              Colour{" "}
-              <input
-                type="color"
-                value={brushColor}
-                onChange={(e) => setBrushColor(e.target.value)}
-              />
-            </label>
-
-            <label>
-              Size{" "}
-              <input
-                type="range"
-                min="1"
-                max="20"
-                value={brushSize}
-                onChange={(e) => setBrushSize(e.target.value)}
-              />
-            </label>
-          </div>
-
-          <canvas
-            ref={canvasRef}
-            onMouseDown={startDrawing}
-            onMouseMove={draw}
-            onMouseUp={stopDrawing}
-            onMouseLeave={stopDrawing}
-            onTouchStart={startDrawing}
-            onTouchMove={draw}
-            onTouchEnd={stopDrawing}
-            style={{
-              width: "100%",
+              display: "block",
+              border: "2px dashed #9cad8d",
+              borderRadius: "24px",
+              padding: "40px 20px",
+              textAlign: "center",
               background: "#fdfcf7",
-              borderRadius: "20px",
-              border: "1px solid #b7c4aa",
-              cursor: "crosshair",
-              touchAction: "none",
-            }}
-          />
-
-          <div
-            style={{
-              marginTop: "30px",
-              display: "grid",
-              gap: "15px",
+              cursor: "pointer",
+              marginBottom: "25px",
             }}
           >
             <input
-              placeholder="Memory title"
+              type="file"
+              accept="image/*"
+              capture="environment"
+              onChange={handleImageUpload}
+              style={{ display: "none" }}
+            />
+            <div style={{ fontSize: "24px", marginBottom: "10px" }}>
+              Upload your map photo
+            </div>
+            <div style={{ color: "#607060" }}>
+              Take a photo or choose an image from your phone.
+            </div>
+          </label>
+
+          {image && (
+            <img
+              src={image}
+              alt="Uploaded map"
+              style={{
+                width: "100%",
+                maxHeight: "520px",
+                objectFit: "contain",
+                borderRadius: "20px",
+                background: "#fdfcf7",
+                border: "1px solid #b7c4aa",
+                marginBottom: "25px",
+              }}
+            />
+          )}
+
+          <div style={{ display: "grid", gap: "15px" }}>
+            <input
+              placeholder="Map title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               style={{
@@ -291,7 +191,7 @@ export default function App() {
             />
 
             <textarea
-              placeholder="Write your story..."
+              placeholder="Write the story behind this map..."
               value={story}
               onChange={(e) => setStory(e.target.value)}
               rows={5}
@@ -325,18 +225,13 @@ export default function App() {
                 cursor: "pointer",
               }}
             >
-              Submit memory
+              Submit map memory
             </button>
           </div>
         </div>
 
-        <h2
-          style={{
-            fontSize: "40px",
-            marginBottom: "30px",
-          }}
-        >
-          Community memories
+        <h2 style={{ fontSize: "40px", marginBottom: "30px" }}>
+          Community map memories
         </h2>
 
         <div
@@ -348,7 +243,7 @@ export default function App() {
         >
           {posts.map((post, index) => (
             <div
-              key={index}
+              key={post.id || index}
               style={{
                 background: "rgba(255,255,255,0.82)",
                 borderRadius: "24px",
@@ -360,50 +255,24 @@ export default function App() {
                 alt=""
                 style={{
                   width: "100%",
-                  height: "240px",
+                  height: "260px",
                   objectFit: "contain",
                   background: "#fdfcf7",
                 }}
               />
 
-              <div
-                style={{
-                  padding: "20px",
-                }}
-              >
-                <h3>{post.title}</h3>
-
-                <p
-                  style={{
-                    lineHeight: 1.7,
-                    color: "#4b5b46",
-                  }}
-                >
+              <div style={{ padding: "20px" }}>
+                <h3>{post.title || "Untitled map memory"}</h3>
+                <p style={{ lineHeight: 1.7, color: "#4b5b46" }}>
                   {post.story}
                 </p>
-
-                <p
-                  style={{
-                    marginTop: "15px",
-                    fontSize: "14px",
-                    color: "#607060",
-                  }}
-                >
+                <p style={{ marginTop: "15px", fontSize: "14px", color: "#607060" }}>
                   — {post.name || "Anonymous"}
                 </p>
 
                 <a
-                  href={`data:text/html;charset=utf-8,${encodeURIComponent(`
-                    <html>
-                      <body style="font-family: Georgia, serif; padding: 40px; background: #dbe7cf;">
-                        <h1>${post.title || "Untitled memory"}</h1>
-                        <p><strong>By:</strong> ${post.name || "Anonymous"}</p>
-                        <img src="${post.image}" style="max-width: 100%; border: 1px solid #b7c4aa; background: #fdfcf7;" />
-                        <p style="font-size: 18px; line-height: 1.7;">${post.story || ""}</p>
-                      </body>
-                    </html>
-                  `)}`}
-                  download={`${post.title || "memory"}.html`}
+                  href={post.image}
+                  download={`${post.title || "map-memory"}.jpg`}
                   style={{
                     display: "inline-block",
                     marginTop: "14px",
@@ -415,7 +284,7 @@ export default function App() {
                     fontSize: "14px",
                   }}
                 >
-                  Download Memory
+                  Download image
                 </a>
               </div>
             </div>
