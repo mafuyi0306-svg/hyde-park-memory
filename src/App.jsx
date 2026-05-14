@@ -122,8 +122,7 @@ export default function App() {
             textAlign: "center",
           }}
         >
-          Upload a photo of your own map of Hyde Park. It can be a hand-drawn map,
-          a marked route, a remembered place, or a visual record of where your story happened.
+          Upload your own Hyde Park map.
         </p>
 
         <div
