@@ -33,6 +33,11 @@ export default function App() {
     const reader = new FileReader();
 
     reader.onload = () => {
+      if (file.type === "application/pdf") {
+        setImage(reader.result);
+        return;
+      }
+
       const img = new Image();
 
       img.onload = () => {
@@ -161,7 +166,24 @@ export default function App() {
             </div>
           </label>
 
-          {image && (
+          {image && image.startsWith("data:application/pdf") ? (
+            <div
+              style={{
+                padding: "30px",
+                borderRadius: "20px",
+                background: "#fdfcf7",
+                border: "1px solid #b7c4aa",
+                marginBottom: "25px",
+                textAlign: "center",
+              }}
+            >
+              PDF selected.
+              <br />
+              <a href={image} target="_blank" rel="noreferrer">
+                Open PDF
+              </a>
+            </div>
+          ) : image ? (
             <img
               src={image}
               alt="Uploaded map"
@@ -175,7 +197,7 @@ export default function App() {
                 marginBottom: "25px",
               }}
             />
-          )}
+          ) : null}
 
           <div style={{ display: "grid", gap: "15px" }}>
             <input
@@ -249,16 +271,34 @@ export default function App() {
                 overflow: "hidden",
               }}
             >
-              <img
-                src={post.image}
-                alt=""
-                style={{
-                  width: "100%",
-                  height: "260px",
-                  objectFit: "contain",
-                  background: "#fdfcf7",
-                }}
-              />
+              {post.image?.startsWith("data:application/pdf") ? (
+                <div
+                  style={{
+                    height: "260px",
+                    background: "#fdfcf7",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    textAlign: "center",
+                    padding: "20px",
+                  }}
+                >
+                  <a href={post.image} target="_blank" rel="noreferrer">
+                    Open uploaded PDF
+                  </a>
+                </div>
+              ) : (
+                <img
+                  src={post.image}
+                  alt=""
+                  style={{
+                    width: "100%",
+                    height: "260px",
+                    objectFit: "contain",
+                    background: "#fdfcf7",
+                  }}
+                />
+              )}
 
               <div style={{ padding: "20px" }}>
                 <h3>{post.title || "Untitled map memory"}</h3>
