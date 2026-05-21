@@ -94,16 +94,29 @@ export default function App() {
         minHeight: "100vh",
         backgroundColor: "#ffffff",
         backgroundImage: `
-          radial-gradient(circle at 12% 18%, #338AC0 0 55px, transparent 56px),
-          radial-gradient(circle at 72% 10%, #F3E51E 0 70px, transparent 71px),
-          radial-gradient(circle at 82% 18%, #1E4E9A 0 36px, transparent 37px),
-          radial-gradient(circle at 82% 18%, transparent 0 85px, #1E4E9A 86px 88px, transparent 89px),
-          linear-gradient(45deg, transparent 0 44%, #A91D50 44% 58%, transparent 58% 100%),
-          radial-gradient(circle at 12% 88%, #F3E51E 0 65px, transparent 66px),
-          linear-gradient(135deg, transparent 0 42%, #36AD32 42% 62%, transparent 62% 100%)
+          radial-gradient(circle at center, #F3E51E 0 70px, transparent 71px),
+          radial-gradient(circle at center, #1E4E9A 0 36px, transparent 37px),
+          radial-gradient(circle at center, transparent 0 90px, #1E4E9A 91px 93px, transparent 94px),
+          linear-gradient(45deg, transparent 0 38%, #A91D50 38% 62%, transparent 62% 100%),
+          linear-gradient(135deg, transparent 0 38%, #36AD32 38% 62%, transparent 62% 100%),
+          radial-gradient(circle at center, #338AC0 0 58px, transparent 59px)
         `,
-        backgroundSize: "260px 260px, 300px 300px, 260px 260px, 260px 260px, 320px 320px, 280px 280px, 360px 360px",
-        backgroundPosition: "left 40px top 80px, right 120px top 40px, right 80px top 120px, right 80px top 120px, left -120px center, left -40px bottom 80px, right -80px bottom 120px",
+        backgroundSize: `
+          clamp(170px, 18vw, 280px) clamp(170px, 18vw, 280px),
+          clamp(160px, 16vw, 240px) clamp(160px, 16vw, 240px),
+          clamp(160px, 16vw, 240px) clamp(160px, 16vw, 240px),
+          clamp(220px, 22vw, 360px) clamp(220px, 22vw, 360px),
+          clamp(230px, 24vw, 380px) clamp(230px, 24vw, 380px),
+          clamp(180px, 18vw, 280px) clamp(180px, 18vw, 280px)
+        `,
+        backgroundPosition: `
+          right 8vw top 7vh,
+          left 8vw bottom 10vh,
+          left 8vw bottom 10vh,
+          left -9vw top 38vh,
+          right -8vw bottom 15vh,
+          left 6vw top 14vh
+        `,
         backgroundRepeat: "no-repeat",
         padding: "60px clamp(16px, 4vw, 40px)",
         fontFamily: "Arial, Helvetica, sans-serif",
