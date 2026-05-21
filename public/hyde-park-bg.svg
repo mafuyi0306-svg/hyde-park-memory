@@ -1,39 +1,35 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice">
-  <defs>
-    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#dfead6"/>
-      <stop offset="45%" stop-color="#c9ddba"/>
-      <stop offset="100%" stop-color="#9fbd83"/>
-    </linearGradient>
-    <filter id="soft">
-      <feGaussianBlur stdDeviation="8"/>
-    </filter>
-  </defs>
+  <rect width="1600" height="1000" fill="#ffffff"/>
 
-  <rect width="1600" height="1000" fill="url(#sky)"/>
+  <!-- yellow circles -->
+  <circle cx="560" cy="110" r="80" fill="#F3E51E"/>
+  <circle cx="80" cy="890" r="75" fill="#F3E51E"/>
+  <circle cx="1320" cy="960" r="62" fill="#F3E51E"/>
 
-  <ellipse cx="470" cy="680" rx="520" ry="150" fill="#8fb6bd" opacity="0.75"/>
-  <ellipse cx="470" cy="680" rx="470" ry="110" fill="#aacbd0" opacity="0.55"/>
+  <!-- blue target circles -->
+  <circle cx="1040" cy="120" r="112" fill="none" stroke="#1E4E9A" stroke-width="2"/>
+  <circle cx="1040" cy="120" r="45" fill="#1E4E9A"/>
+  <circle cx="430" cy="910" r="76" fill="none" stroke="#1E4E9A" stroke-width="2"/>
+  <circle cx="430" cy="910" r="32" fill="#1E4E9A"/>
+  <circle cx="1500" cy="580" r="76" fill="none" stroke="#1E4E9A" stroke-width="2"/>
+  <circle cx="1500" cy="580" r="32" fill="#1E4E9A"/>
 
-  <path d="M1100 1000 C980 760 1120 590 1450 440 L1600 390 L1600 1000 Z" fill="#d7c79f" opacity="0.8"/>
-  <path d="M1130 1000 C1020 760 1160 610 1475 475" fill="none" stroke="#f4eddc" stroke-width="42" opacity="0.7"/>
+  <!-- blue star shapes -->
+  <polygon points="170,130 205,235 315,270 205,305 170,410 135,305 25,270 135,235" fill="#338AC0"/>
+  <polygon points="1010,860 1040,945 1130,972 1040,1000 1010,1085 980,1000 890,972 980,945" fill="#338AC0"/>
 
-  <g opacity="0.9">
-    <circle cx="120" cy="420" r="95" fill="#5d8b52"/>
-    <circle cx="260" cy="360" r="120" fill="#6f9b5d"/>
-    <circle cx="1380" cy="240" r="150" fill="#547d46"/>
-    <circle cx="1510" cy="380" r="120" fill="#6c9657"/>
-    <circle cx="1420" cy="780" r="170" fill="#557d47"/>
-    <circle cx="180" cy="850" r="160" fill="#668e55"/>
-    <circle cx="760" cy="260" r="120" fill="#7aa264"/>
-    <circle cx="980" cy="330" r="95" fill="#638c52"/>
-  </g>
+  <!-- magenta diamonds -->
+  <rect x="-70" y="410" width="160" height="160" transform="rotate(45 10 490)" fill="#A91D50"/>
+  <rect x="1450" y="-40" width="160" height="160" transform="rotate(45 1530 40)" fill="#A91D50"/>
+  <rect x="1390" y="800" width="180" height="180" transform="rotate(45 1480 890)" fill="#A91D50"/>
 
-  <g opacity="0.28" filter="url(#soft)">
-    <circle cx="500" cy="180" r="120" fill="#fff"/>
-    <circle cx="1120" cy="120" r="150" fill="#fff"/>
-    <circle cx="1320" cy="610" r="110" fill="#fff"/>
-  </g>
+  <!-- green hexagons -->
+  <polygon points="960,720 1060,660 1160,720 1160,840 1060,900 960,840" fill="#36AD32"/>
+  <polygon points="1370,345 1450,300 1530,345 1530,435 1450,480 1370,435" fill="#36AD32"/>
+  <polygon points="850,820 920,780 990,820 990,900 920,940 850,900" fill="#36AD32"/>
 
-  <rect width="1600" height="1000" fill="#f4f0e6" opacity="0.18"/>
+  <!-- subtle pale overlays -->
+  <circle cx="250" cy="170" r="180" fill="#DDEAD4" opacity="0.35"/>
+  <circle cx="1400" cy="190" r="220" fill="#DDEAD4" opacity="0.35"/>
+  <circle cx="250" cy="720" r="210" fill="#DDEAD4" opacity="0.3"/>
 </svg>
